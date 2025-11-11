@@ -207,8 +207,9 @@
 (use-package recentf
   :ensure nil			  ; 組み込みパッケージのため、インストール不要
   :custom
-  (recentf-max-saved-items 3000) ; 保存する最大ファイル件数
+  (recentf-max-saved-items 500) ; 保存する最大ファイル件数
   (recentf-exclude '("\.elc$")) ; 除外するファイル
+  (run-with-idle-timer 180 t 'recentf-save-list) ;; 3分間アイドル後に保存
   :config
   (recentf-mode 1)
   )
