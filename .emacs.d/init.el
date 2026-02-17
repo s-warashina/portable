@@ -92,6 +92,9 @@
 ;; 自動インデントの無効化
 (electric-indent-mode -1)
 
+;; scratchバッファのモードを変更 (pareditが邪魔なので)
+(setq initial-major-mode 'fundamental-mode)
+
 (use-package paredit
   :ensure t
   :hook
@@ -178,6 +181,8 @@
   (message "Reverted `%s'" (buffer-name))
   )
 (global-set-key (kbd "C-c r") 'revert-buffer-without-confirmation)
+;; (global-set-key (kbd "M") 'point-to-register)
+;; (global-set-key (kbd "`") 'jump-to-register)
 
 ;; 補完ライブラリ
 (use-package company
@@ -260,6 +265,24 @@ Returns the JST date-time string in the same format."
           (insert jst-string)
           (message "UTC: %s → JST: %s" utc-date-time jst-string))
       jst-string)))
+
+(defun calc-date-diff (date-str1 date-str2)
+  "2つの日付（YYYYMMDD形式）の差を計算して表示します。"
+  (interactive "s開始日 (YYYYMMDD): \ns終了日 (YYYYMMDD): ")
+    (let* ((parse-date (lambda (s)
+                       (let ((year  (string-to-number (substring s 0 4)))
+                             (month (string-to-number (substring s 4 6)))
+                             (day   (string-to-number (substring s 6 8))))
+                         ;; encode-time の引数: (秒 分 時 日 月 年)
+                         (encode-time 0 0 0 day month year))))      
+         ;; 文字列を内部時間形式に変換
+         (time1 (funcall parse-date date-str1))
+         (time2 (funcall parse-date date-str2))
+         ;; 時間の差分を取得（秒単位）
+         (diff-seconds (float-time (time-subtract time2 time1)))
+         ;; 秒を日に変換 (1日 = 60秒 * 60分 * 24時間 = 86400秒)
+         (diff-days (truncate (/ diff-seconds 86400))))
+    (message "日付の差は %d 日です。" (abs diff-days))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
