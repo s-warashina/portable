@@ -81,7 +81,7 @@
 ;; フォント(windows)
 (when (eq system-type 'windows-nt)
   (add-to-list 'default-frame-alist '(font . "Moralerspace Neon-12"))
-  ;; (add-to-list 'default-frame-alist '(font . "Meiryo UI-12"))
+  (add-to-list 'default-frame-alist '(font . "Meiryo UI-12"))
   )
 ;; ファイルサイズをモードラインに表示
 (size-indication-mode t)
