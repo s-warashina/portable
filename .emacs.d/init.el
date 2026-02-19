@@ -55,7 +55,6 @@
   (vertico-mode)
   )
 
-
 ;; verticoの補完UIに対して順序不問の文字列一致検索を提供するパッケージ
 (use-package orderless
   :ensure t
@@ -174,15 +173,30 @@
 ;; (setq auto-revert-interval 3)
 
 ;; C-c rで確認無しでバッファをrevert
-(defun revert-buffer-without-confirmation ()
+(defun my/revert-buffer-without-confirmation ()
   "Revert buffer without confirmation"
   (interactive)
   (revert-buffer t t)
   (message "Reverted `%s'" (buffer-name))
   )
-(global-set-key (kbd "C-c r") 'revert-buffer-without-confirmation)
-;; (global-set-key (kbd "M") 'point-to-register)
-;; (global-set-key (kbd "`") 'jump-to-register)
+(global-set-key (kbd "C-c r") 'my/revert-buffer-without-confirmation)
+
+;; init.elをその場でリロードする
+(defun my/reload-init ()
+  "Reload `user-init-file`."
+  (interactive)
+  (load-file user-init-file)
+  (message "Reloaded: %s" user-init-file))
+
+(global-set-key (kbd "C-c R") #'my/reload-init)
+
+;; init.elをその場で開くショートカット
+(defun my/open-init-el-file ()
+  "Open the user init file."
+  (interactive)
+  (find-file user-init-file))
+
+(global-set-key (kbd "C-c I") #'my/open-init-el-file)
 
 ;; 補完ライブラリ
 (use-package company
