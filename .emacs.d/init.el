@@ -155,7 +155,7 @@
    ("C-c n c" . org-roam-capture) ; 新規ノート作成
    )
   :config
-  (let ((org-roam-dir "~/emacs-org-roam"))
+  (let ((org-roam-dir "~/emacs-org-knowledge-base"))
     (unless (file-directory-p org-roam-dir)
       (make-directory org-roam-dir)
       )
