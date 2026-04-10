@@ -17,7 +17,8 @@ input=$(cat)
 GRN='\033[32m'
 YLW='\033[33m'
 RED='\033[31m'
-CYN='\033[1;36m'  # 太字+シアン (モデル名用)
+MGN='\033[1;35m'   # 太字マゼンタ (ブランチ名用)
+CYN='\033[1;36m'   # 太字+シアン (モデル名用)
 RST='\033[0m'
 
 # 使用率に応じた色を返す (高いほど危険)
@@ -71,8 +72,17 @@ format_reset_time() {
 
 # --- 各セクションの組み立て ---
 
-# 作業ディレクトリ
-path_str="[${cwd:-?}]"
+# 作業ディレクトリ + gitブランチ名
+branch=""
+if [ -n "$cwd" ] && command -v git &>/dev/null; then
+  branch=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null)
+fi
+
+if [ -n "$branch" ]; then
+  path_str="[${cwd:-?}] ${MGN}(${branch})${RST}"
+else
+  path_str="[${cwd:-?}]"
+fi
 
 # モデル名 (太字+シアンで強調)
 model_str="${CYN}${model:-?}${RST}"
@@ -117,4 +127,4 @@ fi
 # --- 出力 ---
 # %s: リテラル文字列 (パスのバックスラッシュが解釈されないように)
 # %b: ANSIエスケープを解釈 (ゲージの色付き部分)
-printf '%s | %b | %b | %b | %b\n' "$path_str" "$model_str" "$five_str" "$week_str" "$ctx_str"
+printf '%b | %b | %b | %b | %b\n' "$path_str" "$model_str" "$five_str" "$week_str" "$ctx_str"
