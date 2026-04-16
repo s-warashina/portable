@@ -78,10 +78,25 @@
   )
 
 ;; フォント(windows)
+;; Moralerspace Neon がインストールされていればそれを使用し、
+;; インストールされていない場合は Meiryo UI にフォールバックする。
 (when (eq system-type 'windows-nt)
-  (add-to-list 'default-frame-alist '(font . "Moralerspace Neon-12"))
-  (add-to-list 'default-frame-alist '(font . "Meiryo UI-12"))
-  )
+  (let ((primary "Moralerspace Neon")
+        (fallback "Meiryo UI"))
+    (let ((font-family (if (find-font (font-spec :family primary))
+                           primary
+                         fallback)))
+	  ;; 基本フォント（英字など）
+      (set-face-attribute 'default nil
+                          :family font-family
+                          :height 120) 
+	  ;; 日本語フォント（ひらがな・漢字）
+      (set-fontset-font t 'japanese-jisx0208
+                        (font-spec :family font-family))
+	  ;; 日本語フォント（カタカナ）
+      (set-fontset-font t 'katakana-jisx0201
+                        (font-spec :family font-family)))))
+
 ;; ファイルサイズをモードラインに表示
 (size-indication-mode t)
 
