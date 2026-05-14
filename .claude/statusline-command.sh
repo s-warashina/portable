@@ -78,10 +78,14 @@ if [ -n "$cwd" ] && command -v git &>/dev/null; then
   branch=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null)
 fi
 
+# printf '%b' はバックスラッシュをエスケープと解釈するため、Windowsパスの \ を \\ に置換しておく
+# (特に \c は出力打ち切りを意味し、パスがそこで切れてしまう)
+cwd_safe="${cwd//\\/\\\\}"
+
 if [ -n "$branch" ]; then
-  path_str="[${cwd:-?}] ${MGN}(${branch})${RST}"
+  path_str="[${cwd_safe:-?}] ${MGN}(${branch})${RST}"
 else
-  path_str="[${cwd:-?}]"
+  path_str="[${cwd_safe:-?}]"
 fi
 
 # モデル名 (太字+シアンで強調)
