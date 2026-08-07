@@ -18,7 +18,8 @@ GRN='\033[32m'
 YLW='\033[33m'
 RED='\033[31m'
 MGN='\033[1;35m'   # 太字マゼンタ (ブランチ名用)
-CYN='\033[1;36m'   # 太字+シアン (モデル名用)
+CYN='\033[1;38;5;123m'  # 太字+明るいシアン (モデル名用 / 256色)
+ORG='\033[1;38;5;208m'  # 太字+明るいオレンジ (Effort用 / 256色)
 RST='\033[0m'
 
 # 使用率に応じた色を返す (高いほど危険)
@@ -53,6 +54,8 @@ five_resets=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
 week_pct=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
 week_resets=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // empty')
 ctx_used=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
+# reasoning effort (low/medium/high/xhigh/max)。モデルが非対応の場合はキー自体が存在しない
+effort=$(echo "$input" | jq -r '.effort.level // empty')
 
 # Unixタイムスタンプ(秒)からローカル時刻 HH:MM を返す
 # 変換失敗時は空文字を返す
@@ -88,8 +91,11 @@ else
   path_str="[${cwd_safe:-?}]"
 fi
 
-# モデル名 (太字+シアンで強調)
+# モデル名 (太字+シアンで強調) + Effort (太字オレンジ、非対応モデルでは省略)
 model_str="${CYN}${model:-?}${RST}"
+if [ -n "$effort" ]; then
+  model_str="${model_str} ${ORG}[${effort}]${RST}"
+fi
 
 # 5時間レートリミット使用率 (色付きゲージ + リセット時刻)
 if [ -n "$five_pct" ]; then
